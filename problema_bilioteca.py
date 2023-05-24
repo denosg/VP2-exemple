@@ -7,10 +7,10 @@ class Carte:
         self.imprumutata_la = None
         self.lista_asteptare = []
 
-    def adaugaClientAsteptare(self, nume_client):
+    def adauga_client_asteptare(self, nume_client):
         self.lista_asteptare.append(nume_client)
 
-    def eliminaClientAsteptare(self, nume_client):
+    def elimina_client_asteptare(self, nume_client):
         self.lista_asteptare.remove(nume_client)
 
     def textString(self):
@@ -31,41 +31,41 @@ class Biblioteca:
         self.carti = []
         self.clienti = []
 
-    def cautareCarte(self, titlu):
+    def cautare_carte(self, titlu):
         for carte in self.carti:
             if carte.titlu == titlu:
                 return carte
         return None
 
-    def adaugaCarte(self, carte):
+    def adauga_carte(self, carte):
         self.carti.append(carte)
 
-    def modificareCarte(self, titlu, autor_nou):
-        carte = self.cautareCarte(titlu)
+    def modificare_carte(self, titlu, autor_nou):
+        carte = self.cautare_carte(titlu)
         if carte:
             carte.autor = autor_nou
             print("Informatii actualizate cu succes!")
         else:
             print("Cartea nu exista in biblioteca.")
 
-    def stergeCarte(self, titlu):
-        carte = self.cautareCarte(titlu)
+    def sterge_carte(self, titlu):
+        carte = self.cautare_carte(titlu)
         if carte:
             if carte.imprumutata_la:
-                print("Cartea este imprumutata si nu poate fi sterse.")
+                print("Cartea este imprumutata si nu poate fi stearsa.")
             else:
                 self.carti.remove(carte)
                 print("Cartea a fost stearsa cu succes!")
         else:
             print("Cartea nu exista in biblioteca.")
 
-    def imprumutaCarte(self, nume_client, titlu):
-        carte = self.cautareCarte(titlu)
+    def imprumuta_carte(self, nume_client, titlu):
+        carte = self.cautare_carte(titlu)
         if not carte:
             print("Cartea nu exista in biblioteca.")
             return
 
-        client = self.cautareClient(nume_client)
+        client = self.cautare_client(nume_client)
         if not client:
             client = Client(nume_client)
             self.clienti.append(client)
@@ -79,16 +79,16 @@ class Biblioteca:
             client.numar_carti_imprumutate += 1
             print("Carte imprumutata cu succes!")
         else:
-            carte.adaugaClientAsteptare(nume_client)
+            carte.adauga_client_asteptare(nume_client)
             print("Cartea este deja imprumutata. Clientul a fost adaugat la lista de asteptare.")
 
-    def returneazaCarte(self, nume_client, titlu):
-        carte = self.cautareCarte(titlu)
+    def returneaza_carte(self, nume_client, titlu):
+        carte = self.cautare_carte(titlu)
         if not carte:
             print("Cartea nu exista in biblioteca.")
             return
 
-        client = self.cautareClient(nume_client)
+        client = self.cautare_client(nume_client)
         if not client:
             print("Clientul nu exista.")
             return
@@ -99,33 +99,33 @@ class Biblioteca:
             print("Carte returnata cu succes!")
 
             if carte.lista_asteptare:
-                urmatorul_client = self.cautareClient(carte.lista_asteptare[0])
+                urmatorul_client = self.cautare_client(carte.lista_asteptare[0])
                 carte.lista_asteptare.pop(0)
-                self.imprumutaCarte(urmatorul_client.nume, carte.titlu)
+                self.imprumuta_carte(urmatorul_client.nume, carte.titlu)
         else:
             print("Cartea nu este imprumutata de acest client.")
 
-    def cautareClient(self, nume_client):
+    def cautare_client(self, nume_client):
         for client in self.clienti:
             if client.nume == nume_client:
                 return client
         return None
 
     def afisare_carte(self, titlu):
-        carte = self.cautareCarte(titlu)
+        carte = self.cautare_carte(titlu)
         if carte:
             print(carte.textString())
         else:
             print("Cartea nu exista in biblioteca.")
 
     def afisare_client(self, nume_client):
-        client = self.cautareClient(nume_client)
+        client = self.cautare_client(nume_client)
         if client:
             print(client.textString())
         else:
             print("Clientul nu exista.")
 
-    def afisareBiblioteca(self):
+    def afisare_biblioteca(self):
         if self.carti:
             for carte in self.carti:
                 print(carte.textString())
@@ -133,7 +133,7 @@ class Biblioteca:
         else:
             print("Biblioteca este goala.")
 
-    def salveazaDate(self):
+    def salveaza_date(self):
         try:
             with open("salvate.txt", "wb") as file:
                 pickle.dump(self, file)
@@ -141,8 +141,7 @@ class Biblioteca:
         except:
             print("Eroare la salvarea datelor.")
 
-    @staticmethod
-    def incarca_date():
+    def incarca_date(self):
         try:
             with open("salvate.txt", "rb") as file:
                 biblioteca = pickle.load(file)
@@ -153,7 +152,7 @@ class Biblioteca:
             return Biblioteca()
 
 
-biblioteca = Biblioteca.incarca_date()
+biblioteca = Biblioteca().incarca_date()
 
 while True:
     print("\n========= MENIU =========")
@@ -174,21 +173,21 @@ while True:
         titlu = input("Introduceti titlul cartii: ")
         autor = input("Introduceti autorul cartii: ")
         carte = Carte(titlu, autor)
-        biblioteca.adaugaCarte(carte)
+        biblioteca.adauga_carte(carte)
         print("Carte adaugata cu succes!")
     elif optiune == "3":
         titlu = input("Introduceti titlul cartii: ")
         autor_nou = input("Introduceti noul autor: ")
-        biblioteca.modificareCarte(titlu, autor_nou)
+        biblioteca.modificare_carte(titlu, autor_nou)
     elif optiune == "4":
         titlu = input("Introduceti titlul cartii: ")
-        biblioteca.stergeCarte(titlu)
+        biblioteca.sterge_carte(titlu)
     elif optiune == "5":
         nume_client = input("Introduceti numele clientului: ")
         titlu = input("Introduceti titlul cartii: ")
-        biblioteca.returneazaCarte(nume_client, titlu)
+        biblioteca.returneaza_carte(nume_client, titlu)
     elif optiune == "6":
-        biblioteca.salveazaDate()
+        biblioteca.salveaza_date()
         break
     else:
         print("Optiune invalida! Va rugam selectati o optiune valida.")
